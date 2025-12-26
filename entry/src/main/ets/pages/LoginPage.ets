@@ -3,6 +3,7 @@ import router from '@ohos.router';
 import common from '@ohos.app.ability.common';
 import { UserModel } from '../models/UserModel';
 import prompt from '@ohos.promptAction';
+import { AuthService } from '../services/AuthService';
 
 @Entry
 @Component
@@ -16,6 +17,7 @@ struct LoginPage {
 
   // 获取UI上下文
   private context = getContext(this) as common.UIAbilityContext;
+  private authService: AuthService = new AuthService();
 
   build() {
     Column() {
@@ -236,11 +238,7 @@ struct LoginPage {
 
     try {
       const userModel = new UserModel();
-      const result = await userModel.login({
-        username: this.username,
-        password: this.password
-      });
-
+      const result = await this.authService.login(this.username, this.password);
       if (result.success) {
         // 保存登录状态
         await userModel.saveLoginInfo(this.username, this.rememberMe);
